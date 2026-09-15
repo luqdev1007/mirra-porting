@@ -74,6 +74,7 @@ Unity может записать embedded-пакет в `Packages/packages-lock
 
 - Пакет: `com.romanlee17.mirrasdk5`, актуальная версия в main — 5.1.31. Репозиторий: `https://github.com/MirraSDK/SDK5.git`.
 - Сборки: `MirraGames.SDK`, `MirraGames.SDK.Common`, `MirraGames.SDK.Editor`, `MirraGames.SDK.MirraWeb`, `MirraGames.SDK.Addressables`, `MirraGames.SDK.Fallback`, `MirraGames.SDK.UnityEngine`, `MirraGames.SDK.System`, `MirraGames.SDK.Prototype`, `MirraGames.SDK.Android`, `MirraGames.SDK.iOS`.
+- Точка входа: класс `MirraSDK` в namespace `MirraGames.SDK`.
 - Из `Editor.Sdk` ссылаться только на `MirraGames.SDK` и `MirraGames.SDK.Common`.
 - Версию SDK в проекте определять через `UnityEditor.PackageManager.PackageInfo`, без ссылок на сборки SDK.
 

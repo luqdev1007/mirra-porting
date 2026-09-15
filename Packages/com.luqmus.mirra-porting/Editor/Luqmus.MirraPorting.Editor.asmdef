@@ -1,0 +1,7 @@
+{
+  "name": "Luqmus.MirraPorting.Editor",
+  "rootNamespace": "Luqmus.MirraPorting",
+  "references": [],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false
+}

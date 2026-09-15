@@ -1,0 +1,8 @@
+{
+  "name": "com.luqmus.mirra-porting",
+  "version": "0.1.0",
+  "displayName": "Mirra Porting Tools",
+  "description": "Editor tools for porting Unity games to MirraSDK5.",
+  "unity": "2022.3",
+  "author": { "name": "luqmus", "url": "https://github.com/luqdev1007" }
+}

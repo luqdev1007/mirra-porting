@@ -1,0 +1,11 @@
+{
+  "name": "Luqmus.MirraPorting.Editor.Sdk",
+  "rootNamespace": "Luqmus.MirraPorting.Sdk",
+  "references": ["Luqmus.MirraPorting.Editor", "MirraGames.SDK", "MirraGames.SDK.Common"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false,
+  "defineConstraints": ["MIRRA_SDK5"],
+  "versionDefines": [
+    { "name": "com.romanlee17.mirrasdk5", "expression": "5.0.0", "define": "MIRRA_SDK5" }
+  ]
+}
