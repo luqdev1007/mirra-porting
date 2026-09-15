@@ -1,4 +1,0 @@
-repository "MirraPorting/MirraPorting@10170756515017@cloud"
-  path "/"
-    br "/main"
-    co "/main"

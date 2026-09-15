@@ -35,3 +35,7 @@ crashlytics-build.properties
 
 # Claude Code: личные локальные настройки
 .claude/settings.local.json
+
+# Unity Version Control (Plastic)
+.plastic/
+ignore.conf
