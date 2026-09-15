@@ -77,6 +77,8 @@ Unity может записать embedded-пакет в `Packages/packages-lock
 - Точка входа: класс `MirraSDK` в namespace `MirraGames.SDK`.
 - Из `Editor.Sdk` ссылаться только на `MirraGames.SDK` и `MirraGames.SDK.Common`.
 - Версию SDK в проекте определять через `UnityEditor.PackageManager.PackageInfo`, без ссылок на сборки SDK.
+- При импорте SDK создаёт `Assets/Resources/MirraSDK5/`: `Preferences.json` и `.asset` с UI Toolkit-разметкой окон SDK. В порте это часть интеграции и коммитится. `Preferences.json` — вероятное хранилище настроек Toolkit, смотреть при проектировании инструмента 2.
+- Проверки ассетов (этапы 3–4) должны исключать `Assets/Resources/MirraSDK5/` — asmdef там нет, правило исключения SDK по asmdef эту папку не покрывает.
 
 `PlatformType` (`MirraGames.SDK.Common`):
 ```csharp

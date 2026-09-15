@@ -320,3 +320,4 @@ UI Toolkit из кода, без UXML и USS-файлов.
 - Перед коммитом шага 1 — временная установка MirraSDK5 для проверки, что `Luqmus.MirraPorting.Editor.Sdk` собирается, с последующим откатом `Packages/manifest.json` и `Packages/packages-lock.json`.
 - Тесты embedded-пакета Unity подхватывает сама: запись `testables` в `Packages/manifest.json` не понадобилась.
 - Запись `com.luqmus.mirra-porting` в `Packages/packages-lock.json` в этом репозитории коммитится: пакет здесь свой, embedded. Правило «lock не должен меняться из-за пакета» относится к репозиторию порта.
+- После временной установки SDK удалять `Assets/Resources/MirraSDK5/` и, если в `Assets/Resources/` больше ничего не осталось, сам каталог вместе с `Assets/Resources.meta`.
