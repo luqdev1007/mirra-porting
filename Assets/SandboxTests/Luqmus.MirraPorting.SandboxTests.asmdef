@@ -1,0 +1,14 @@
+{
+    "name": "Luqmus.MirraPorting.SandboxTests",
+    "rootNamespace": "Sandbox.Tests",
+    "references": [
+        "Luqmus.MirraPorting.Editor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": ["Editor"],
+    "overrideReferences": true,
+    "precompiledReferences": ["nunit.framework.dll"],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"]
+}
