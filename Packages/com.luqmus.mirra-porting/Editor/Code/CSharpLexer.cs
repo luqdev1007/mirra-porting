@@ -131,7 +131,7 @@ namespace Luqmus.MirraPorting.Code
                 {
                     InterpolationFrame unfinished = _frames[_frames.Count - 1];
                     _frames.RemoveAt(_frames.Count - 1);
-                    AddDiagnostic(LexDiagnosticCode.UnterminatedString, unfinished.ChunkLine, unfinished.ChunkColumn);
+                    AddDiagnostic(UnterminatedCodeOf(unfinished), unfinished.ChunkLine, unfinished.ChunkColumn);
                 }
             }
 
@@ -384,7 +384,7 @@ namespace Luqmus.MirraPorting.Code
                 }
 
                 AddToken(TokenKind.String, _source.Substring(start, _position - start), line, column, start);
-                AddDiagnostic(LexDiagnosticCode.UnterminatedString, line, column);
+                AddDiagnostic(LexDiagnosticCode.UnterminatedVerbatimString, line, column);
             }
 
             private void ScanCharLiteral()
@@ -514,8 +514,19 @@ namespace Luqmus.MirraPorting.Code
                 }
 
                 EmitChunk(frame, _position);
-                AddDiagnostic(LexDiagnosticCode.UnterminatedString, frame.ChunkLine, frame.ChunkColumn);
+                AddDiagnostic(UnterminatedCodeOf(frame), frame.ChunkLine, frame.ChunkColumn);
                 _frames.Clear();
+            }
+
+            /// <summary>
+            /// A verbatim string that never closed swallowed the rest of the file; a plain one
+            /// only cost the line it started on.
+            /// </summary>
+            private static LexDiagnosticCode UnterminatedCodeOf(InterpolationFrame frame)
+            {
+                return frame.IsVerbatim
+                    ? LexDiagnosticCode.UnterminatedVerbatimString
+                    : LexDiagnosticCode.UnterminatedString;
             }
 
             /// <summary>Everything after a top level : up to the closing brace is format, not code.</summary>

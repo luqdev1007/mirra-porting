@@ -229,8 +229,9 @@ namespace Luqmus.MirraPorting.Tests.Code
                 T(TokenKind.Punct, ";", 2, 2));
 
             // The inner string died with the line; the verbatim one outlived it and was only
-            // reported unterminated at the end of the file.
-            Diagnostics(result, LexDiagnosticCode.UnterminatedString, LexDiagnosticCode.UnterminatedString);
+            // reported unterminated at the end of the file, where it had swallowed the rest.
+            Diagnostics(
+                result, LexDiagnosticCode.UnterminatedString, LexDiagnosticCode.UnterminatedVerbatimString);
         }
 
         [Test]

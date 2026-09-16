@@ -126,7 +126,7 @@ namespace Luqmus.MirraPorting.Tests.Code
                 "@\"abc\nstill inside",
                 T(TokenKind.String, "@\"abc\nstill inside", 1, 1));
 
-            Diagnostics(result, LexDiagnosticCode.UnterminatedString);
+            Diagnostics(result, LexDiagnosticCode.UnterminatedVerbatimString);
         }
     }
 }

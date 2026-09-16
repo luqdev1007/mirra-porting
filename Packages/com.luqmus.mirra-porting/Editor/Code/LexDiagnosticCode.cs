@@ -22,5 +22,12 @@ namespace Luqmus.MirraPorting.Code
 
         /// <summary>The condition of #if or #elif could not be parsed; it counts as unknown.</summary>
         InvalidConditionExpression = 6,
+
+        /// <summary>
+        /// A verbatim string, plain or interpolated, ran to the end of the file. Unlike
+        /// <see cref="UnterminatedString"/>, which costs one line, this one swallows everything
+        /// below it, so the report has to name the file.
+        /// </summary>
+        UnterminatedVerbatimString = 7,
     }
 }
