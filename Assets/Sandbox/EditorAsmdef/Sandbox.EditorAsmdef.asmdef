@@ -1,0 +1,7 @@
+{
+    "name": "Sandbox.EditorAsmdef",
+    "rootNamespace": "Sandbox.EditorAsmdef",
+    "references": [],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false
+}

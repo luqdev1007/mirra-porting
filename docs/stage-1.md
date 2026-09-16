@@ -346,3 +346,11 @@ UI Toolkit из кода, без UXML и USS-файлов.
 - Файлы результата сортируются по `ProjectRelativePath`: порядок обхода каталогов файловой системой не гарантирован, а два скана неизменного проекта должны давать одинаковый отчёт.
 - Файлы, имя которых начинается с точки, пропускаются так же, как скрытые папки: Unity их не импортирует.
 - `ScanContext` пока содержит только окружение и список файлов, токены и объявленные типы добавит шаг 4.
+
+### Проверка editor-only на реальных файлах (между шагами 3 и 4)
+
+- Активная платформа проверки — **WebGL** (модуль установлен, проект уже был на ней).
+- Четыре случая в `Assets/Sandbox/` совпали с ожиданием, расхождений нет: `Plain/PlainScript.cs` — false, `Editor/SpecialFolderEditorScript.cs` — true, `EditorAsmdef/EditorAsmdefScript.cs` — true (asmdef с `includePlatforms: ["Editor"]`, слова `Editor` в пути нет), `RuntimeAsmdef/Editor/NestedEditorFolderScript.cs` — false.
+- Подтверждено: asmdef без ограничений платформ сильнее специальной папки `Editor`. Запасной вариант «в пути есть сегмент `Editor`» дал бы на последнем файле `true`, поэтому сборки спрашиваются первыми, а путь — только когда файл не принадлежит ни одной сборке.
+- `CompilationPipeline.GetAssemblies(AssembliesType.Editor)` возвращает **все** сборки, собираемые для редактора, включая рантаймовые (`Assembly-CSharp`, `Sandbox.RuntimeAsmdef` есть и там, и в `Player`). Поэтому признак editor-only — именно разность с `AssembliesType.Player`, а не факт присутствия в списке Editor.
+- Эталон случаев — `Assets/Sandbox/EXPECTED.md`, колонки правил добавятся на шаге 8.

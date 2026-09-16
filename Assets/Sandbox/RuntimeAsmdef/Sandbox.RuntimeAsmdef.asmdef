@@ -1,0 +1,6 @@
+{
+    "name": "Sandbox.RuntimeAsmdef",
+    "rootNamespace": "Sandbox.RuntimeAsmdef",
+    "references": [],
+    "autoReferenced": false
+}
