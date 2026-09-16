@@ -39,6 +39,12 @@ namespace Luqmus.MirraPorting.Code
             get { return _lineStarts.Count; }
         }
 
+        /// <summary>Length of the source, so that a region left open can end at the end of the file.</summary>
+        internal int SourceLength
+        {
+            get { return _source.Length; }
+        }
+
         /// <summary>
         /// Text of a 1-based line without its line break, or an empty string when the line is out
         /// of range.
