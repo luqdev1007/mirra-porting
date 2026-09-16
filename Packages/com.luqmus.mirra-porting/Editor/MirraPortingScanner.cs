@@ -21,7 +21,7 @@ namespace Luqmus.MirraPorting
         /// <returns>Path to report.json, or null when the scan could not be written.</returns>
         public static string ScanAndExport()
         {
-            return ScanAndExport(Path.Combine(ProjectRootPath(), DefaultOutputFolder));
+            return ScanAndExport(DefaultOutputDirectory());
         }
 
         /// <summary>
@@ -66,6 +66,12 @@ namespace Luqmus.MirraPorting
             }
 
             return result;
+        }
+
+        /// <summary>Library/MirraPorting of this project, where the menu item writes.</summary>
+        internal static string DefaultOutputDirectory()
+        {
+            return Path.Combine(ProjectRootPath(), DefaultOutputFolder);
         }
 
         internal static string JsonPath(string outputDirectory)
