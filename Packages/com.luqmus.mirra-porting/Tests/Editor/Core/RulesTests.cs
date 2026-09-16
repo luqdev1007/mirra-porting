@@ -42,6 +42,29 @@ namespace Luqmus.MirraPorting.Tests.Core
         }
 
         [Test]
+        public void ForbiddenApiRules_AreAllInTheForbiddenApiCategory()
+        {
+            foreach (Rule rule in Rules.All)
+            {
+                if (rule.Id.StartsWith("API.", System.StringComparison.Ordinal))
+                {
+                    Assert.AreEqual(Categories.ForbiddenApi, rule.Category, rule.Id);
+                }
+            }
+        }
+
+        [Test]
+        public void WriteRules_AreErrorsAndReadRulesAreWarnings()
+        {
+            Assert.AreEqual(Severity.Error, Rules.TimeScaleWrite.Severity);
+            Assert.AreEqual(Severity.Warning, Rules.TimeScaleRead.Severity);
+            Assert.AreEqual(Severity.Error, Rules.CursorLockWrite.Severity);
+            Assert.AreEqual(Severity.Warning, Rules.CursorLockRead.Severity);
+            Assert.AreEqual(Severity.Warning, Rules.OrientationWrite.Severity);
+            Assert.AreEqual(Severity.Error, Rules.PlayerPrefs.Severity);
+        }
+
+        [Test]
         public void ScanInternalError_IsAWarningInTheScanCategory()
         {
             Assert.AreEqual(Severity.Warning, Rules.ScanInternalError.Severity);

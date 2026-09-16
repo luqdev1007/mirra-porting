@@ -52,7 +52,7 @@ namespace Luqmus.MirraPorting.Tests.Core
 
             ScanContextBuildResult result = ScanContextBuilder.Build(_environment, new[] { first, second });
 
-            var names = new List<string>(result.Context.DeclaredNames);
+            var names = new List<string>(result.Context.DeclaredTypes.Names);
             names.Sort(StringComparer.Ordinal);
             CollectionAssert.AreEqual(new[] { "Time", "time" }, names);
         }
@@ -83,7 +83,9 @@ namespace Luqmus.MirraPorting.Tests.Core
             ScanContextBuildResult result = ScanContextBuilder.Build(_environment, new[] { file });
 
             CollectionAssert.IsEmpty(result.Errors);
-            CollectionAssert.AreEqual(new[] { "Время" }, result.Context.Files[0].DeclaredNames);
+            CollectionAssert.AreEqual(
+                new[] { "Время" },
+                result.Context.Files[0].Declarations.Names.Select(declared => declared.Name).ToList());
             Assert.AreEqual(2, result.Context.Files[0].Lex.Tokens[0].Line);
         }
 
@@ -93,7 +95,7 @@ namespace Luqmus.MirraPorting.Tests.Core
             ScanContextBuildResult result = ScanContextBuilder.Build(_environment, new ScopedFile[0]);
 
             CollectionAssert.IsEmpty(result.Context.Files);
-            CollectionAssert.IsEmpty(result.Context.DeclaredNames);
+            CollectionAssert.IsEmpty(result.Context.DeclaredTypes.Names);
             CollectionAssert.IsEmpty(result.Errors);
         }
 

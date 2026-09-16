@@ -16,6 +16,7 @@ namespace Luqmus.MirraPorting.Core
             string category,
             Severity severity,
             Confidence confidence,
+            string confidenceReason,
             bool editorOnly,
             string path,
             int line,
@@ -28,6 +29,7 @@ namespace Luqmus.MirraPorting.Core
             Category = category;
             Severity = severity;
             Confidence = confidence;
+            ConfidenceReason = confidenceReason;
             EditorOnly = editorOnly;
             Path = path;
             Line = line;
@@ -44,6 +46,12 @@ namespace Luqmus.MirraPorting.Core
         internal Severity Severity { get; }
 
         internal Confidence Confidence { get; }
+
+        /// <summary>
+        /// Why the confidence is not High, in Russian: "в проекте объявлен свой тип Cursor
+        /// (MyUi)", "через using static UnityEngine.Time". Empty for a High confidence finding.
+        /// </summary>
+        internal string ConfidenceReason { get; }
 
         /// <summary>File belongs to an editor only assembly, or the code sits under #if UNITY_EDITOR.</summary>
         internal bool EditorOnly { get; }
@@ -78,6 +86,7 @@ namespace Luqmus.MirraPorting.Core
             int column,
             string snippet,
             Confidence confidence,
+            string confidenceReason,
             bool editorOnly,
             string messageOverride = null)
         {
@@ -93,6 +102,7 @@ namespace Luqmus.MirraPorting.Core
                 rule.Category,
                 severity,
                 confidence,
+                confidence == Confidence.High ? string.Empty : (confidenceReason ?? string.Empty),
                 editorOnly,
                 path ?? string.Empty,
                 line,

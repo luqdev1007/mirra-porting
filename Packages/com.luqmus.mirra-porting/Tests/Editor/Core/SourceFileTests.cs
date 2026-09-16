@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Luqmus.MirraPorting.Code;
 using Luqmus.MirraPorting.Core;
 using NUnit.Framework;
@@ -13,7 +15,7 @@ namespace Luqmus.MirraPorting.Tests.Core
 
             Assert.Greater(file.Lex.Tokens.Count, 0);
             Assert.AreEqual(1, file.Usings.StaticUsings.Count);
-            CollectionAssert.AreEqual(new[] { "Game", "Time" }, file.DeclaredNames);
+            CollectionAssert.AreEqual(new[] { "Game", "Time" }, Names(file));
             Assert.AreEqual("Assets/A.cs", file.ProjectRelativePath);
         }
 
@@ -75,6 +77,11 @@ namespace Luqmus.MirraPorting.Tests.Core
             Assert.IsNotNull(file.FirstTruncatingDiagnostic, "Expected " + expected);
             Assert.AreEqual(expected, file.FirstTruncatingDiagnostic.Code);
             Assert.AreEqual(line, file.FirstTruncatingDiagnostic.Line);
+        }
+
+        private static IReadOnlyList<string> Names(SourceFile file)
+        {
+            return file.Declarations.Names.Select(declared => declared.Name).ToList();
         }
 
         private static int OffsetOf(SourceFile file, string tokenText)

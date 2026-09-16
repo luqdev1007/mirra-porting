@@ -26,13 +26,13 @@ namespace Luqmus.MirraPorting.Core
             LexResult lex,
             ConditionalRegions regions,
             UsingContext usings,
-            IReadOnlyList<string> declaredNames)
+            DeclaredNames declarations)
         {
             File = file;
             Lex = lex;
             Regions = regions;
             Usings = usings;
-            DeclaredNames = declaredNames;
+            Declarations = declarations;
 
             DiagnosticCount = CountReportable(lex.Diagnostics) + CountReportable(regions.Diagnostics);
             InternalErrorDiagnostic = FirstOf(lex, regions, LexDiagnosticCode.InternalError);
@@ -47,8 +47,8 @@ namespace Luqmus.MirraPorting.Core
 
         internal UsingContext Usings { get; }
 
-        /// <summary>Type and namespace names this file declares.</summary>
-        internal IReadOnlyList<string> DeclaredNames { get; }
+        /// <summary>Names this file declares and the namespaces it opens.</summary>
+        internal DeclaredNames Declarations { get; }
 
         internal string ProjectRelativePath
         {

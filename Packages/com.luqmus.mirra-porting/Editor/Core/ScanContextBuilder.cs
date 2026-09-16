@@ -24,7 +24,7 @@ namespace Luqmus.MirraPorting.Core
 
             var sources = new List<SourceFile>(files.Count);
             var errors = new List<ScanError>();
-            var declaredNames = new HashSet<string>(StringComparer.Ordinal);
+            var declaredNames = new List<DeclaredName>();
 
             foreach (ScopedFile file in files)
             {
@@ -38,7 +38,7 @@ namespace Luqmus.MirraPorting.Core
 
                 sources.Add(source);
 
-                foreach (string name in source.DeclaredNames)
+                foreach (DeclaredName name in source.Declarations.Names)
                 {
                     declaredNames.Add(name);
                 }
@@ -54,7 +54,8 @@ namespace Luqmus.MirraPorting.Core
                 }
             }
 
-            return new ScanContextBuildResult(new ScanContext(environment, sources, declaredNames), errors);
+            var context = new ScanContext(environment, sources, DeclaredTypeIndex.Build(declaredNames));
+            return new ScanContextBuildResult(context, errors);
         }
     }
 }

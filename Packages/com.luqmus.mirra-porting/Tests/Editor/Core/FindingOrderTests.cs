@@ -68,7 +68,7 @@ namespace Luqmus.MirraPorting.Tests.Core
             Severity severity, string category, string ruleId, string path, int line, int column = 1)
         {
             return new Finding(
-                ruleId, category, severity, Confidence.High, false, path, line, column, "snippet", "message", "suggestion");
+                ruleId, category, severity, Confidence.High, string.Empty, false, path, line, column, "snippet", "message", "suggestion");
         }
     }
 }

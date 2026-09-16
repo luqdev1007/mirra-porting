@@ -16,7 +16,7 @@ namespace Luqmus.MirraPorting.Tests.Core
         public void FromRule_CopiesRuleTextAndPosition()
         {
             Finding finding = Finding.FromRule(
-                ErrorRule, "Assets/Scripts/PauseMenu.cs", 42, 9, "Time.timeScale = 0f;", Confidence.High, false);
+                ErrorRule, "Assets/Scripts/PauseMenu.cs", 42, 9, "Time.timeScale = 0f;", Confidence.High, string.Empty, false);
 
             Assert.AreEqual("API.TEST_WRITE", finding.RuleId);
             Assert.AreEqual(Categories.ForbiddenApi, finding.Category);
@@ -35,7 +35,7 @@ namespace Luqmus.MirraPorting.Tests.Core
         public void FromRule_EditorOnlyLowersSeverityToInfo()
         {
             Finding finding = Finding.FromRule(
-                ErrorRule, "Assets/Editor/Tool.cs", 1, 1, "Time.timeScale = 0f;", Confidence.High, true);
+                ErrorRule, "Assets/Editor/Tool.cs", 1, 1, "Time.timeScale = 0f;", Confidence.High, string.Empty, true);
 
             Assert.AreEqual(Severity.Info, finding.Severity);
             Assert.IsTrue(finding.EditorOnly);
@@ -45,7 +45,7 @@ namespace Luqmus.MirraPorting.Tests.Core
         public void FromRule_EditorOnlyKeepsSeverityOfAnInfoRule()
         {
             Finding finding = Finding.FromRule(
-                InfoRule, "Assets/Editor/Tool.cs", 1, 1, "snippet", Confidence.High, true);
+                InfoRule, "Assets/Editor/Tool.cs", 1, 1, "snippet", Confidence.High, string.Empty, true);
 
             Assert.AreEqual(Severity.Info, finding.Severity);
         }
@@ -54,7 +54,7 @@ namespace Luqmus.MirraPorting.Tests.Core
         public void FromRule_TrimsTheSnippet()
         {
             Finding finding = Finding.FromRule(
-                ErrorRule, "Assets/A.cs", 1, 1, "    Time.timeScale = 0f;\t", Confidence.High, false);
+                ErrorRule, "Assets/A.cs", 1, 1, "    Time.timeScale = 0f;\t", Confidence.High, string.Empty, false);
 
             Assert.AreEqual("Time.timeScale = 0f;", finding.Snippet);
         }
@@ -65,7 +65,7 @@ namespace Luqmus.MirraPorting.Tests.Core
             string longLine = new string('x', 400);
 
             Finding finding = Finding.FromRule(
-                ErrorRule, "Assets/A.cs", 1, 1, longLine, Confidence.High, false);
+                ErrorRule, "Assets/A.cs", 1, 1, longLine, Confidence.High, string.Empty, false);
 
             Assert.AreEqual(Finding.MaxSnippetLength, finding.Snippet.Length);
             Assert.IsTrue(finding.Snippet.EndsWith("…", StringComparison.Ordinal));
@@ -74,7 +74,7 @@ namespace Luqmus.MirraPorting.Tests.Core
         [Test]
         public void FromRule_NullSnippetBecomesEmpty()
         {
-            Finding finding = Finding.FromRule(ErrorRule, "Assets/A.cs", 1, 1, null, Confidence.High, false);
+            Finding finding = Finding.FromRule(ErrorRule, "Assets/A.cs", 1, 1, null, Confidence.High, string.Empty, false);
 
             Assert.AreEqual(string.Empty, finding.Snippet);
         }
@@ -83,7 +83,7 @@ namespace Luqmus.MirraPorting.Tests.Core
         public void FromRule_MessageOverrideReplacesTheRuleMessage()
         {
             Finding finding = Finding.FromRule(
-                Rules.ScanInternalError, "Assets/A.cs", 0, 0, string.Empty, Confidence.High, false,
+                Rules.ScanInternalError, "Assets/A.cs", 0, 0, string.Empty, Confidence.High, string.Empty, false,
                 "NullReferenceException в TestCheck");
 
             Assert.AreEqual("NullReferenceException в TestCheck", finding.Message);
@@ -91,10 +91,36 @@ namespace Luqmus.MirraPorting.Tests.Core
         }
 
         [Test]
+        public void FromRule_ConfidenceReasonIsKeptWhenTheConfidenceIsNotHigh()
+        {
+            Finding finding = Finding.FromRule(
+                ErrorRule, "Assets/A.cs", 1, 1, "x", Confidence.Low, "в проекте объявлен свой тип Cursor (MyUi)", false);
+
+            Assert.AreEqual("в проекте объявлен свой тип Cursor (MyUi)", finding.ConfidenceReason);
+        }
+
+        [Test]
+        public void FromRule_HighConfidenceNeverCarriesAReason()
+        {
+            Finding finding = Finding.FromRule(
+                ErrorRule, "Assets/A.cs", 1, 1, "x", Confidence.High, "что-то", false);
+
+            Assert.AreEqual(string.Empty, finding.ConfidenceReason);
+        }
+
+        [Test]
+        public void FromRule_MissingReasonBecomesEmpty()
+        {
+            Finding finding = Finding.FromRule(ErrorRule, "Assets/A.cs", 1, 1, "x", Confidence.Low, null, false);
+
+            Assert.AreEqual(string.Empty, finding.ConfidenceReason);
+        }
+
+        [Test]
         public void FromRule_NullRuleThrows()
         {
             Assert.Throws<ArgumentNullException>(
-                () => Finding.FromRule(null, "Assets/A.cs", 1, 1, "x", Confidence.High, false));
+                () => Finding.FromRule(null, "Assets/A.cs", 1, 1, "x", Confidence.High, string.Empty, false));
         }
     }
 }

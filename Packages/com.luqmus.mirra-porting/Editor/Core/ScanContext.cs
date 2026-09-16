@@ -10,7 +10,7 @@ namespace Luqmus.MirraPorting.Core
         internal ScanContext(
             IProjectEnvironment environment,
             IReadOnlyList<SourceFile> files,
-            IReadOnlyCollection<string> declaredNames)
+            DeclaredTypeIndex declaredTypes)
         {
             if (environment == null)
             {
@@ -22,14 +22,14 @@ namespace Luqmus.MirraPorting.Core
                 throw new ArgumentNullException(nameof(files));
             }
 
-            if (declaredNames == null)
+            if (declaredTypes == null)
             {
-                throw new ArgumentNullException(nameof(declaredNames));
+                throw new ArgumentNullException(nameof(declaredTypes));
             }
 
             Environment = environment;
             Files = files;
-            DeclaredNames = declaredNames;
+            DeclaredTypes = declaredTypes;
         }
 
         internal IProjectEnvironment Environment { get; }
@@ -38,9 +38,9 @@ namespace Luqmus.MirraPorting.Core
         internal IReadOnlyList<SourceFile> Files { get; }
 
         /// <summary>
-        /// Type and namespace names declared anywhere in the project, case sensitive. A game that
-        /// declares its own Time makes a match on Time uncertain.
+        /// Names declared anywhere in the project with their namespaces. A game that declares its
+        /// own Time makes a match on Time uncertain, but only in files that can see it.
         /// </summary>
-        internal IReadOnlyCollection<string> DeclaredNames { get; }
+        internal DeclaredTypeIndex DeclaredTypes { get; }
     }
 }
