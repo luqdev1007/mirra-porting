@@ -15,6 +15,8 @@ namespace Luqmus.MirraPorting.Core
     /// </summary>
     internal sealed class UnityProjectEnvironment : IProjectEnvironment
     {
+        private const string MirraSdkPackageName = "com.romanlee17.mirrasdk5";
+
         private readonly HashSet<string> _editorSourceFiles;
         private readonly HashSet<string> _playerSourceFiles;
         private readonly List<ScanRoot> _roots;
@@ -24,6 +26,12 @@ namespace Luqmus.MirraPorting.Core
             string assetsPath = PathUtil.Normalize(Application.dataPath);
             ProjectRootPath = PathUtil.Normalize(Directory.GetParent(Application.dataPath).FullName);
             ActiveBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
+            UnityVersion = Application.unityVersion;
+            MirraSdkVersion = VersionOfPackage(MirraSdkPackageName);
+
+            PackageInfo self = PackageInfo.FindForAssembly(typeof(UnityProjectEnvironment).Assembly);
+            ToolName = self != null ? self.name : string.Empty;
+            ToolVersion = self != null ? self.version : string.Empty;
 
             _editorSourceFiles = CollectSourceFiles(AssembliesType.Editor);
             _playerSourceFiles = CollectSourceFiles(AssembliesType.Player);
@@ -33,6 +41,14 @@ namespace Luqmus.MirraPorting.Core
         public string ProjectRootPath { get; }
 
         public string ActiveBuildTarget { get; }
+
+        public string UnityVersion { get; }
+
+        public string MirraSdkVersion { get; }
+
+        public string ToolName { get; }
+
+        public string ToolVersion { get; }
 
         public IReadOnlyList<ScanRoot> GetScanRoots()
         {
@@ -67,6 +83,20 @@ namespace Luqmus.MirraPorting.Core
             }
 
             return files;
+        }
+
+        /// <summary>Version of a registered package, or an empty string when it is not installed.</summary>
+        private static string VersionOfPackage(string packageName)
+        {
+            foreach (PackageInfo package in PackageInfo.GetAllRegisteredPackages())
+            {
+                if (string.Equals(package.name, packageName, StringComparison.Ordinal))
+                {
+                    return package.version;
+                }
+            }
+
+            return string.Empty;
         }
 
         private static List<ScanRoot> CollectRoots(string assetsPath)

@@ -18,11 +18,23 @@ namespace Luqmus.MirraPorting.Tests.Core
         {
             ProjectRootPath = PathUtil.Normalize(projectRootPath);
             ActiveBuildTarget = "WebGL";
+            UnityVersion = "2022.3.62f1";
+            MirraSdkVersion = string.Empty;
+            ToolName = "com.luqmus.mirra-porting";
+            ToolVersion = "0.1.0";
         }
 
         public string ProjectRootPath { get; }
 
         public string ActiveBuildTarget { get; set; }
+
+        public string UnityVersion { get; set; }
+
+        public string MirraSdkVersion { get; set; }
+
+        public string ToolName { get; set; }
+
+        public string ToolVersion { get; set; }
 
         public IReadOnlyList<ScanRoot> GetScanRoots()
         {

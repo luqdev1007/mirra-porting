@@ -211,7 +211,7 @@ Finding
 | `API.PERSISTENT_DATA_PATH` | `Application.persistentDataPath` | Warning | файловые сейвы → `MirraSDK.Data.*`; логи и кэш можно оставить |
 | `API.FILE_WRITE` | `File.WriteAllText/WriteAllBytes/WriteAllLines/AppendAllText/AppendAllLines` | Warning | то же. `System.IO.File` или `File` при `using System.IO` → High, иначе Low |
 | `API.RUN_IN_BACKGROUND_WRITE` | `Application.runInBackground` Write | Warning | Run in Background должен оставаться включённым |
-| `API.ORIENTATION_WRITE` | `Screen.orientation`, `Screen.autoRotateToPortrait`, `Screen.autoRotateToPortraitUpsideDown`, `Screen.autoRotateToLandscapeLeft`, `Screen.autoRotateToLandscapeRight` Write | Warning | ориентация задаётся темплейтом; на YouTube Playables лок запрещён |
+| `API.ORIENTATION_WRITE` | `Screen.orientation`, `Screen.autorotateToPortrait`, `Screen.autorotateToPortraitUpsideDown`, `Screen.autorotateToLandscapeLeft`, `Screen.autorotateToLandscapeRight` Write | Warning | ориентация задаётся темплейтом; на YouTube Playables лок запрещён |
 
 Находки с `EditorOnly = true` получают Severity Info независимо от правила.
 
@@ -429,8 +429,17 @@ UI Toolkit из кода, без UXML и USS-файлов.
 
 ### Шаг 5, песочница
 
-- **Исправление таблицы шага 5.** В задаче члены `Screen` записаны как `autoRotateToPortrait`, `autoRotateToPortraitUpsideDown`, `autoRotateToLandscapeLeft`, `autoRotateToLandscapeRight`. В Unity они называются `autorotateToPortrait` и так далее — со строчной `r`. Имена членов сверяются с учётом регистра, поэтому четыре правила молча не находили бы ничего. В таблице теперь правильные имена; ошибку поймала компиляция песочницы.
+- **Исправление таблицы шага 5.** В задаче члены `Screen` записаны как `autoRotateToPortrait`, `autoRotateToPortraitUpsideDown`, `autoRotateToLandscapeLeft`, `autoRotateToLandscapeRight`. В Unity они называются `autorotateToPortrait` и так далее — со строчной `r`. Имена членов сверяются с учётом регистра, поэтому четыре правила молча не находили бы ничего. В таблице теперь правильные имена, и **текст задачи в шаге 5 исправлен тоже**, чтобы ошибка не вернулась при следующем чтении. Поймала её компиляция песочницы.
 - Чтобы такое ловилось тестами, а не компилятором чужого кода, добавлен `ForbiddenApiTableReflectionTests`: он сверяет всю таблицу с настоящим API через рефлексию — типы существуют и лежат в заявленных namespace, каждый член существует ровно с таким именем, свойства действительно свойства, методы — методы, у правил на запись член доступен на запись, у правил на чтение — на чтение. Тестовая сборка `UnityEngine` видит, ядру пакета рефлексия по-прежнему не нужна.
 - Песочница `Assets/Sandbox/ForbiddenApi/` покрывает все правила таблицы и все случаи разрешения имени: квалифицированное обращение, `nameof`, строки и комментарии, свой `Time` и `Cursor` в отдельном namespace, алиас на Unity-тип и алиас, уводящий имя в сторону, `using static` вместе с одноимёнными объявлениями, ветка `#if UNITY_EDITOR`.
 - Ожидания живут пометками `// EXPECT RuleId Severity Confidence EditorOnly` в самих скриптах, раздел `ForbiddenApi` в `EXPECTED.md` собран из них. Прогон `ScanScope` → `ScanContextBuilder` → `ForbiddenApiCheck` на реальном проекте дал **38 находок из 38**, без лишних и пропущенных.
 - Голое `File` без `using System.IO;` (Low) в песочницу не попадает: такой файл не компилируется. Случай проверяется только тестами.
+
+### Шаг 6, модель отчёта и DTO
+
+- **Сводка без двойного счёта:** `summary.errors/warnings/info` считают только находки с `EditorOnly = false`, `summary.editorOnly` — все находки с `EditorOnly = true`, независимо от severity. Сумма четырёх равна числу находок, это закреплено тестом. Так же считает сводная таблица Markdown и строка в консоль.
+- Модель отчёта (`ScanReport`, `ScanSummary`, `DiagnosticsSummary`, `TruncatedFile`, `ProjectInfo`) живёт в `Core` и не знает про форматы. DTO для `JsonUtility` — отдельно, в `Report/`: только они знают порядок и имена полей файла.
+- `JsonReport.TryParse` нужен не только round-trip-тесту: на шаге 7 окно читает последний `report.json` при `OnEnable`. Неизвестный `severity` читается как `Info`, неизвестный `confidence` — как `Low`: отчёт из будущей версии должен открываться, а не падать.
+- Даты — ISO 8601 UTC (`yyyy-MM-ddTHH:mm:ssZ`, `CultureInfo.InvariantCulture`), длительность — целое число миллисекунд.
+- `IProjectEnvironment` дополнен `UnityVersion`, `MirraSdkVersion`, `ToolName`, `ToolVersion` — шапка отчёта берётся оттуда, поэтому фейковое окружение подставляет в тестах что угодно. Проверено на проекте: `PackageInfo.FindForAssembly` для сборки пакета отдаёт `com.luqmus.mirra-porting` и `0.1.0`, версия SDK пустая, когда пакета нет.
+- **Профиль API проекта — `.NET Standard 2.0`** (проверено `PlayerSettings.GetApiCompatibilityLevel`). В нём есть `File.Replace` (3 и 4 аргумента) и **только** `File.Move(source, dest)`: перегрузки с флагом перезаписи нет, атомарная замена на шаге записи делается через `File.Replace` при существующей цели и `File.Move` иначе.

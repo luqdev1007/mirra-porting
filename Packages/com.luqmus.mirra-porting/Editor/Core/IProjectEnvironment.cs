@@ -18,6 +18,18 @@ namespace Luqmus.MirraPorting.Core
         /// </summary>
         string ActiveBuildTarget { get; }
 
+        /// <summary>Editor version the report was made with, for example "2022.3.62f1".</summary>
+        string UnityVersion { get; }
+
+        /// <summary>Version of MirraSDK5 in the project, or an empty string when it is not a package.</summary>
+        string MirraSdkVersion { get; }
+
+        /// <summary>Package name of the scanner itself.</summary>
+        string ToolName { get; }
+
+        /// <summary>Package version of the scanner itself.</summary>
+        string ToolVersion { get; }
+
         /// <summary>Folders to walk: Assets plus every embedded and local package.</summary>
         IReadOnlyList<ScanRoot> GetScanRoots();
 
