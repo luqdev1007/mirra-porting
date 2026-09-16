@@ -35,10 +35,10 @@ namespace Luqmus.MirraPorting.Checks
             WriteOnlyProperty(UnityEngine, "Application", "runInBackground", "API.RUN_IN_BACKGROUND_WRITE"),
 
             WriteOnlyProperty(UnityEngine, "Screen", "orientation", "API.ORIENTATION_WRITE"),
-            WriteOnlyProperty(UnityEngine, "Screen", "autoRotateToPortrait", "API.ORIENTATION_WRITE"),
-            WriteOnlyProperty(UnityEngine, "Screen", "autoRotateToPortraitUpsideDown", "API.ORIENTATION_WRITE"),
-            WriteOnlyProperty(UnityEngine, "Screen", "autoRotateToLandscapeLeft", "API.ORIENTATION_WRITE"),
-            WriteOnlyProperty(UnityEngine, "Screen", "autoRotateToLandscapeRight", "API.ORIENTATION_WRITE"),
+            WriteOnlyProperty(UnityEngine, "Screen", "autorotateToPortrait", "API.ORIENTATION_WRITE"),
+            WriteOnlyProperty(UnityEngine, "Screen", "autorotateToPortraitUpsideDown", "API.ORIENTATION_WRITE"),
+            WriteOnlyProperty(UnityEngine, "Screen", "autorotateToLandscapeLeft", "API.ORIENTATION_WRITE"),
+            WriteOnlyProperty(UnityEngine, "Screen", "autorotateToLandscapeRight", "API.ORIENTATION_WRITE"),
 
             Method(SystemIo, "File", "WriteAllText", "API.FILE_WRITE"),
             Method(SystemIo, "File", "WriteAllBytes", "API.FILE_WRITE"),

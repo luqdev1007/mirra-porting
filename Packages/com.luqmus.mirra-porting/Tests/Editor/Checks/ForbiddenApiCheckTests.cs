@@ -77,9 +77,9 @@ namespace Luqmus.MirraPorting.Tests.Checks
                 "API.ORIENTATION_WRITE",
                 CheckFixture.Single("Screen.orientation = ScreenOrientation.Portrait;").RuleId);
             Assert.AreEqual(
-                "API.ORIENTATION_WRITE", CheckFixture.Single("Screen.autoRotateToPortrait = true;").RuleId);
+                "API.ORIENTATION_WRITE", CheckFixture.Single("Screen.autorotateToPortrait = true;").RuleId);
             Assert.AreEqual(
-                "API.ORIENTATION_WRITE", CheckFixture.Single("Screen.autoRotateToLandscapeLeft = false;").RuleId);
+                "API.ORIENTATION_WRITE", CheckFixture.Single("Screen.autorotateToLandscapeLeft = false;").RuleId);
             CheckFixture.None("var o = Screen.orientation;");
         }
 
