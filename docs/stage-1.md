@@ -321,3 +321,14 @@ UI Toolkit из кода, без UXML и USS-файлов.
 - Тесты embedded-пакета Unity подхватывает сама: запись `testables` в `Packages/manifest.json` не понадобилась.
 - Запись `com.luqmus.mirra-porting` в `Packages/packages-lock.json` в этом репозитории коммитится: пакет здесь свой, embedded. Правило «lock не должен меняться из-за пакета» относится к репозиторию порта.
 - После временной установки SDK удалять `Assets/Resources/MirraSDK5/` и, если в `Assets/Resources/` больше ничего не осталось, сам каталог вместе с `Assets/Resources.meta`.
+
+### Шаг 2
+
+- `Severity` и `Confidence` — с явными значениями (`Error = 0, Warning = 1, Info = 2`; `High = 0, Medium = 1, Low = 2`): порядок входит в контракт отчёта (по нему сортируются находки), а в JSON enum пишутся именами.
+- `SCAN.INTERNAL_ERROR` — `Severity.Warning`, категория `Scan`: сбой проверки означает неполное покрытие сканера, а не проблему в проекте. Текст исключения подставляется через `messageOverride`, `Suggestion` берётся из правила.
+- Понижение `Severity` до `Info` при `EditorOnly = true` живёт в `Finding.FromRule`, а не в каждой проверке: правило общее для всех категорий.
+- Обрезка сниппета (`Trim`, не длиннее 160 символов, последний символ — `…`) — там же.
+- Сортировка — LINQ `OrderBy/ThenBy` (`FindingOrder.Sort`), `List.Sort` не используется: он нестабилен. При полном совпадении ключей находки сохраняют порядок, в котором их выдали проверки, поэтому два скана неизменного проекта дают одинаковые отчёты. Отдельного `FindingComparer` нет.
+- В ключах сортировки `Category` и `RuleId` сравниваются `StringComparer.Ordinal`, `Path` — `OrdinalIgnoreCase`, чтобы пути, отличающиеся только регистром, шли рядом.
+- `Finding` и `Rule` неизменяемые и `internal`. Для JSON на шаге 6 будут отдельные `[Serializable]`-DTO в `Report/`: `JsonUtility` умеет только публичные поля, а модель ядра ради него менять не нужно.
+- `Rules.Find` возвращает `null` на неизвестный id, а не бросает: чтение чужого `report.json` не должно падать.
