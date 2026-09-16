@@ -18,7 +18,8 @@ namespace Luqmus.MirraPorting.Core
             ScanSummary summary,
             DiagnosticsSummary diagnostics,
             IReadOnlyList<TruncatedFile> truncatedFiles,
-            IReadOnlyList<Finding> findings)
+            IReadOnlyList<Finding> findings,
+            IReadOnlyList<string> sdkFoldersInAssets = null)
         {
             if (project == null)
             {
@@ -39,6 +40,7 @@ namespace Luqmus.MirraPorting.Core
             Diagnostics = diagnostics;
             TruncatedFiles = truncatedFiles ?? new TruncatedFile[0];
             Findings = findings;
+            SdkFoldersInAssets = sdkFoldersInAssets ?? new string[0];
         }
 
         internal ProjectInfo Project { get; }
@@ -60,5 +62,12 @@ namespace Luqmus.MirraPorting.Core
 
         /// <summary>Findings in report order, see <see cref="FindingOrder"/>.</summary>
         internal IReadOnlyList<Finding> Findings { get; }
+
+        /// <summary>
+        /// Folders where MirraSDK sits inside Assets instead of being a package. It changes what
+        /// the header says about the SDK version; report.json carries the same fact as a notice,
+        /// so this is not serialized separately.
+        /// </summary>
+        internal IReadOnlyList<string> SdkFoldersInAssets { get; }
     }
 }

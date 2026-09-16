@@ -70,7 +70,8 @@ namespace Luqmus.MirraPorting.Core
                 ScanSummary.FromFindings(findings, sources.Count),
                 CountDiagnostics(sources),
                 CollectTruncatedFiles(sources),
-                findings);
+                findings,
+                scope.ExcludedSdkFolders);
 
             return ScanRunResult.Completed(report);
         }

@@ -50,6 +50,11 @@ namespace Luqmus.MirraPorting
             try
             {
                 ReportWriter.PrepareDirectory(options.OutputDirectory);
+
+                // Markdown first, report.json last: the presence of the JSON means a finished scan.
+                ReportWriter.WriteText(
+                    Path.Combine(options.OutputDirectory, ReportWriter.MarkdownFileName),
+                    MarkdownReport.Build(result.Report));
                 ReportWriter.WriteText(JsonPath(options.OutputDirectory), JsonReport.ToJson(result.Report));
             }
             catch (Exception exception)
