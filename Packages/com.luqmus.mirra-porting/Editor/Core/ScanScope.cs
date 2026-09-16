@@ -59,6 +59,7 @@ namespace Luqmus.MirraPorting.Core
         {
             var files = new List<ScopedFile>();
             var errors = new List<ScanError>();
+            var sdkFolders = new List<string>();
 
             foreach (ScanRoot root in _environment.GetScanRoots())
             {
@@ -67,17 +68,18 @@ namespace Luqmus.MirraPorting.Core
                     continue;
                 }
 
-                CollectRoot(root, files, errors);
+                CollectRoot(root, files, errors, sdkFolders);
             }
 
             List<ScopedFile> ordered = files
                 .OrderBy(f => f.ProjectRelativePath, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            return new ScanScopeResult(ordered, errors);
+            sdkFolders.Sort(StringComparer.OrdinalIgnoreCase);
+            return new ScanScopeResult(ordered, errors, sdkFolders);
         }
 
-        private void CollectRoot(ScanRoot root, List<ScopedFile> files, List<ScanError> errors)
+        private void CollectRoot(ScanRoot root, List<ScopedFile> files, List<ScanError> errors, List<string> sdkFolders)
         {
             if (!Directory.Exists(root.AbsolutePath))
             {
@@ -106,6 +108,7 @@ namespace Luqmus.MirraPorting.Core
                 if (HoldsSdkAssembly(entries))
                 {
                     // A copy of MirraSDK inside Assets: it and everything under it is not game code.
+                    sdkFolders.Add(PathUtil.ToProjectRelative(root, directory) ?? root.ProjectRelativePath);
                     continue;
                 }
 

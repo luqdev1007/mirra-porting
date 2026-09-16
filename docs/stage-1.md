@@ -443,3 +443,16 @@ UI Toolkit из кода, без UXML и USS-файлов.
 - Даты — ISO 8601 UTC (`yyyy-MM-ddTHH:mm:ssZ`, `CultureInfo.InvariantCulture`), длительность — целое число миллисекунд.
 - `IProjectEnvironment` дополнен `UnityVersion`, `MirraSdkVersion`, `ToolName`, `ToolVersion` — шапка отчёта берётся оттуда, поэтому фейковое окружение подставляет в тестах что угодно. Проверено на проекте: `PackageInfo.FindForAssembly` для сборки пакета отдаёт `com.luqmus.mirra-porting` и `0.1.0`, версия SDK пустая, когда пакета нет.
 - **Профиль API проекта — `.NET Standard 2.0`** (проверено `PlayerSettings.GetApiCompatibilityLevel`). В нём есть `File.Replace` (3 и 4 аргумента) и **только** `File.Move(source, dest)`: перегрузки с флагом перезаписи нет, атомарная замена на шаге записи делается через `File.Replace` при существующей цели и `File.Move` иначе.
+
+### Шаг 6, ScanRunner и запись
+
+- `ScanContextBuilder` и `ScanContextBuildResult` удалены: цикл по файлам переехал в `ScanRunner` вместе с прогрессом и отменой, их тесты — в `ScanRunnerTests`.
+- Отмена спрашивается между файлами и между проверками. Отменённый скан возвращает `WasCancelled` без отчёта и **ничего не пишет**: прошлый `report.json` остаётся нетронутым.
+- `ScanError` (нечитаемая папка, отсутствующий корень, нечитаемый файл) → находка `SCAN.INTERNAL_ERROR` с `line = 0, column = 0`: позиции у неё нет. `InternalErrorDiagnostic` лексера → `SCAN.INTERNAL_ERROR` **с его `Line`/`Column`**: место сбоя известно. Сбой самой проверки → находка без пути и позиции.
+- `ScanScope` отдаёт `ExcludedSdkFolders` — папки, исключённые по asmdef `MirraGames.SDK*`. На каждую отчёт добавляет notice «MirraSDK лежит в …, версия не определена»: пакетом SDK не установлен, и версию прочитать неоткуда.
+- Запись: `PrepareDirectory` создаёт папку и удаляет оставшиеся от прерванного прогона `*.tmp`; `WriteText` пишет во временный файл рядом и ставит его на место — `File.Replace` при существующей цели, `File.Move` иначе. UTF-8 без BOM.
+- Ошибка записи наружу не бросается: `ScanAndExport` ловит исключение, пишет `Debug.LogError` с путём и причиной и возвращает `null`. Тест: на месте `report.json` лежит каталог с таким именем.
+- Корень проекта — `Path.GetDirectoryName(Application.dataPath)`, не текущая директория процесса: у пакетного запуска она может быть любой.
+- Единственный public-тип пакета — `Luqmus.MirraPorting.MirraPortingScanner` с `ScanAndExport()` и `ScanAndExport(outputDirectory)`, возвращающими путь к `report.json` или `null`. Прогресс-бар живёт в пункте меню, поэтому вызов из тестов и из `-executeMethod` не трогает UI.
+- Список проверок — `ScanChecks.Create()`, одно место на весь сканер.
+- Проверено тестом на реальном проекте: два скана неизменного проекта дают одинаковый JSON, кроме `startedAt`, `finishedAt`, `durationMs`.
