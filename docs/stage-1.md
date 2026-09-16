@@ -332,3 +332,17 @@ UI Toolkit из кода, без UXML и USS-файлов.
 - В ключах сортировки `Category` и `RuleId` сравниваются `StringComparer.Ordinal`, `Path` — `OrdinalIgnoreCase`, чтобы пути, отличающиеся только регистром, шли рядом.
 - `Finding` и `Rule` неизменяемые и `internal`. Для JSON на шаге 6 будут отдельные `[Serializable]`-DTO в `Report/`: `JsonUtility` умеет только публичные поля, а модель ядра ради него менять не нужно.
 - `Rules.Find` возвращает `null` на неизвестный id, а не бросает: чтение чужого `report.json` не должно падать.
+
+### Шаг 3
+
+- Проверено на реальном проекте: `Assembly.sourceFiles` — проектно-относительные пути с прямыми слэшами, а для пакетов префикс виртуальный, `Packages/<name>/…` (`PackageInfo.assetPath`), не `resolvedPath`. Подтверждено на источниках Embedded, Local, Git и Registry: последние две группы лежат в `Library/PackageCache`, но в `sourceFiles` всё равно `Packages/<name>/…`. Поэтому `PathUtil.ToProjectRelative` переносит абсолютный путь на `ScanRoot.ProjectRelativePath`, и local-пакет вне проекта попадает в отчёт как `Packages/<name>/…`, совпадая с тем, что говорит `CompilationPipeline`.
+- Все сравнения и множества путей — `StringComparer.OrdinalIgnoreCase`: списки исходников сборок, имена исключённых пакетов, сегмент `Editor` в запасном варианте, сортировка файлов.
+- `IProjectEnvironment.ActiveBuildTarget` (в `UnityProjectEnvironment` — `EditorUserBuildSettings.activeBuildTarget.ToString()`) нужен отчёту на шаге 6: набор Player-сборок зависит от активной платформы, поэтому при цели, отличной от WebGL, отчёт должен предупреждать, что классификация editor-only может быть неточной. В этом репозитории цель сейчас `StandaloneWindows64`: 32 Editor-сборки против 8 Player.
+- `UnityProjectEnvironment` снимает состояние проекта (исходники сборок, корни сканирования) один раз в конструкторе: скан работает на одном снимке, даже если редактор успеет перекомпилироваться.
+- Unity API в ядре не ограничен `UnityProjectEnvironment`: `AsmdefProbe` разбирает `.asmdef` через `JsonUtility`, и это допустимо — запрет касается сторонних JSON-библиотек. Полностью без Unity API остаётся только `Editor/Code/` (шаг 4).
+- `ScanScope` не бросает исключений наружу: нечитаемая папка, отсутствующий корень и файл вне своего корня становятся `ScanError`. `ScanRunner` на шаге 6 превратит их в `SCAN.INTERNAL_ERROR`.
+- Нечитаемый или битый `.asmdef` даёт пустое имя сборки, и папка не исключается: лучше просканировать лишнее, чем молча пропустить код игры.
+- Имя SDK-сборки сверяется по префиксу `MirraGames.SDK` с учётом регистра (`StringComparison.Ordinal`).
+- Файлы результата сортируются по `ProjectRelativePath`: порядок обхода каталогов файловой системой не гарантирован, а два скана неизменного проекта должны давать одинаковый отчёт.
+- Файлы, имя которых начинается с точки, пропускаются так же, как скрытые папки: Unity их не импортирует.
+- `ScanContext` пока содержит только окружение и список файлов, токены и объявленные типы добавит шаг 4.
